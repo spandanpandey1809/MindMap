@@ -7,8 +7,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +19,5 @@ public class Node {
     @GeneratedValue
     int id;
     int parId;
-    boolean status;
-    String des;
+    String description;
 }

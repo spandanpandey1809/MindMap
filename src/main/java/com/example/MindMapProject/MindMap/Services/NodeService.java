@@ -16,15 +16,18 @@ public class NodeService {
         this.nodeRepository = nodeRepository;
     }
 
-    public Node CreateMindMap(){
+    public Node CreateMindMap(String desc){
         Node node = new Node();
         node.setParId(-1);
+        node.setDescription(desc);
+
         return nodeRepository.save(node);
     }
 
-    public Node CreateNode(int id){
+    public Node CreateNode(int id,String desc){
         Node node = new Node();
         node.setParId(id);
+        node.setDescription(desc);
         return  nodeRepository.save(node);
     }
 
@@ -43,4 +46,43 @@ public class NodeService {
             traverse(child.getId(),subTree);
         }
     }
+
+    public boolean deleteNode(int id) {
+       Node node = nodeRepository.findById(id).orElse(null);
+        if(node != null){
+            recursiveDelete(id);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void recursiveDelete(int id){
+        List<Node> children = nodeRepository.findByParId(id);
+        for(Node child : children){
+            recursiveDelete(child.getId());
+        }
+        nodeRepository.deleteById(id);
+    }
+
+    public boolean changeNodeDesc(int id,String desc){
+        Node node = nodeRepository.findById(id).orElse(null);
+        if(node != null){
+            node.setDescription(desc);
+            nodeRepository.save(node);
+            return true;
+        }else return false;
+    }
+
+    public boolean changeNodePar(int id, int parId){
+        Node node = nodeRepository.findById(id).orElse(null);
+        if(node != null){
+            node.setParId(parId);
+            nodeRepository.save(node);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
