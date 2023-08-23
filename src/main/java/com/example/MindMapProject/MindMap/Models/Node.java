@@ -20,4 +20,5 @@ public class Node {
     int id;
     int parId;
     String description;
+    String path;
 }

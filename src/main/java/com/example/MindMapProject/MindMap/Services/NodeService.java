@@ -20,22 +20,35 @@ public class NodeService {
         Node node = new Node();
         node.setParId(-1);
         node.setDescription(desc);
-
+        nodeRepository.save(node);
+        node.setPath(String.valueOf(node.getId()));
         return nodeRepository.save(node);
     }
 
-    public Node CreateNode(int id,String desc){
-        Node node = new Node();
-        node.setParId(id);
-        node.setDescription(desc);
-        return  nodeRepository.save(node);
+    public Node CreateNode(int parentId, String desc) {
+
+        Node parentNode = nodeRepository.findById(parentId).orElse(null);
+        if (parentNode != null) {
+            Node newNode = new Node();
+            newNode.setParId(parentId);
+            newNode = nodeRepository.save(newNode);
+            String newPath = parentNode.getPath() + ">" + newNode.getId();
+            newNode.setPath(newPath);
+            newNode.setDescription(desc);
+            newNode = nodeRepository.save(newNode);
+
+            return newNode;
+        }
+        return null;
     }
 
     public List<Node> getSubtree(int id){
         List<Node> subTree = new ArrayList<>();
         Node node = nodeRepository.findById(id).orElse(null);
-        subTree.add(node);
-        traverse(id,subTree);
+        if(node!=null) {
+            subTree.add(node);
+        }
+        traverse(id, subTree);
         return subTree;
     }
 

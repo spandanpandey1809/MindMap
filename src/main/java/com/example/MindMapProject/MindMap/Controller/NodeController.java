@@ -1,6 +1,7 @@
 package com.example.MindMapProject.MindMap.Controller;
 
 import com.example.MindMapProject.MindMap.Models.Node;
+import com.example.MindMapProject.MindMap.Repository.NodeRepository;
 import com.example.MindMapProject.MindMap.Services.NodeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +24,34 @@ public class NodeController {
     }
 
     @PostMapping("/createNode/{id}")
-    public Node createNode(@PathVariable int id, @RequestParam String desc){
-        return nodeService.CreateNode(id,desc);
+    public ResponseEntity<?> createNode(@PathVariable int id, @RequestParam String desc) {
+        try {
+            Node createdNode = nodeService.CreateNode(id, desc);
+
+            if (createdNode == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Parent node not found");
+            }
+
+            return ResponseEntity.ok(createdNode);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred");
+        }
     }
 
     @GetMapping("/getSubTree/{id}")
-    public List<Node> getSubtree(@PathVariable int id){
-        return nodeService.getSubtree(id);
+    public ResponseEntity<?> getSubtree(@PathVariable int id) {
+        try {
+            List<Node> subtree = nodeService.getSubtree(id);
+            System.out.println(subtree);
+            if (subtree.size()==0) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subtree not found");
+            }
+            return ResponseEntity.ok(subtree);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error occurred");
+        }
     }
+
 
     @DeleteMapping("/deleteNode/{id}")
     public ResponseEntity<String> deleteNode(@PathVariable int id) {
