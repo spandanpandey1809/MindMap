@@ -52,6 +52,27 @@ public class NodeService {
         return subTree;
     }
 
+    public  List<String> getLeafNodes(int id){
+        List<String> leafNodes = new ArrayList<>();
+        Node node = nodeRepository.findById(id).orElse(null);
+        if(node == null)return leafNodes;
+        dfs(id,leafNodes);
+        return leafNodes;
+    }
+
+    public void dfs(int id, List<String>leafNodes){
+        List<Node> children = nodeRepository.findByParId(id);
+        if(children.isEmpty()){
+            Node reqNode = nodeRepository.findById(id).orElse(null);
+            leafNodes.add(reqNode.getPath());
+            return;
+        }
+        for(Node child : children){
+            dfs(child.getId(),leafNodes);
+        }
+
+    }
+
     public void traverse(int id, List<Node> subTree){
         List<Node> children = nodeRepository.findByParId(id);
         subTree.addAll(children);

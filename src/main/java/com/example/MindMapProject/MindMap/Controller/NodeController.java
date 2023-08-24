@@ -81,4 +81,11 @@ public class NodeController {
         }
 
     }
+
+    @GetMapping("/getLeafNodes/{id}")
+    public ResponseEntity<?> getLeafList(@PathVariable int id){
+        List<String> req = nodeService.getLeafNodes(id);
+        if(req.isEmpty())return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Node not found.");
+        return ResponseEntity.ok(nodeService.getLeafNodes(id));
+    }
 }
